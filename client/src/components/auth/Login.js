@@ -4,14 +4,16 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import TextFieldGroup from "../common/TextFieldGroup";
+import Spinner from "../common/Spinner";
 
 class Login extends Component {
   constructor() {
     super();
     this.state = {
-      email: "gopalsjadhav309@gmail.com",
-      password: "gggggg",
+      email: "omkarmanchekar.24@gmail.com",
+      password: "444444",
       errors: {},
+      loading: false,
     };
 
     this.onChange = this.onChange.bind(this);
@@ -25,11 +27,13 @@ class Login extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
+    if (nextProps.auth.loading) {
+      this.setState({
+        errors: {},
+      });
+    } else if (nextProps.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
-    }
-
-    if (nextProps.errors) {
+    } else if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors,
       });
@@ -56,6 +60,12 @@ class Login extends Component {
   render() {
     const { errors } = this.state;
 
+    let buttonView = this.props.auth.loading ? (
+      <Spinner />
+    ) : (
+      <input type="submit" className="btn btn-info btn-block mt-4" />
+    );
+
     return (
       <div className="login">
         <div className="container">
@@ -63,7 +73,7 @@ class Login extends Component {
             <div className="col-md-8 m-auto">
               <h1 className="display-4 text-center">Log In</h1>
               <p className="lead text-center">
-                Sign in to your DevConnector account
+                Sign in to your Question Paper Generator account
               </p>
               <form onSubmit={this.onSubmit}>
                 <TextFieldGroup
@@ -84,7 +94,7 @@ class Login extends Component {
                   error={errors.password}
                 />
 
-                <input type="submit" className="btn btn-info btn-block mt-4" />
+                {buttonView}
               </form>
             </div>
           </div>

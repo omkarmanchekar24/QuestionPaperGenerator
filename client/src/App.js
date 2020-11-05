@@ -18,6 +18,11 @@ import Landing from "./components/layout/Landing";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
 import Dashboard from "./components/dashboard/Dashboard";
+import CreateProfile from "./components/create-profile/CreateProfile";
+
+import EditProfile from "./components/edit-profile/EditProfile";
+import AddExperience from "./components/add-credentials/AddExperience";
+import AddEducation from "./components/add-credentials/AddEducation";
 
 class App extends Component {
   render() {
@@ -32,6 +37,34 @@ class App extends Component {
               <Route path="/register" exact component={Register} />
               <Switch>
                 <PrivateRoute path="/dashboard" exact component={Dashboard} />
+              </Switch>
+              <Switch>
+                <PrivateRoute
+                  path="/create-profile"
+                  exact
+                  component={CreateProfile}
+                />
+              </Switch>
+              <Switch>
+                <PrivateRoute
+                  path="/edit-profile"
+                  exact
+                  component={EditProfile}
+                />
+              </Switch>
+              <Switch>
+                <PrivateRoute
+                  path="/add-experience"
+                  exact
+                  component={AddExperience}
+                />
+              </Switch>
+              <Switch>
+                <PrivateRoute
+                  path="/add-education"
+                  exact
+                  component={AddEducation}
+                />
               </Switch>
             </div>
             <Footer />

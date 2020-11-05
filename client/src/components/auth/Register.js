@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 
 import { connect } from "react-redux";
 import TextFieldGroup from "../common/TextFieldGroup";
+import Spinner from "../common/Spinner";
 
 //Action
 import { registerUser } from "../../actions/authActions";
@@ -30,7 +31,11 @@ class Register extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.errors) {
+    if (nextProps.auth.loading) {
+      this.setState({
+        errors: {},
+      });
+    } else if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors,
       });
@@ -58,6 +63,12 @@ class Register extends Component {
 
   render() {
     const { errors } = this.state;
+
+    let buttonContent = this.props.auth.loading ? (
+      <Spinner />
+    ) : (
+      <input type="submit" className="btn btn-info btn-block mt-4" />
+    );
 
     return (
       <div className="register">
@@ -105,7 +116,7 @@ class Register extends Component {
                   error={errors.password2}
                 />
 
-                <input type="submit" className="btn btn-info btn-block mt-4" />
+                {buttonContent}
               </form>
             </div>
           </div>
