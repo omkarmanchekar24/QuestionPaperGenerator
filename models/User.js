@@ -7,6 +7,9 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  cloudinary: {
+    type: Object,
+  },
   email: {
     type: String,
     required: true,

@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 const passport = require("passport");
+const { cloudinary } = require("../../utils/cloudinary");
 
 //Load input validation
 const validateRegisterInput = require("../../validation/register");
@@ -86,7 +87,7 @@ router.post("/login", (req, res) => {
         const payload = {
           id: user.id,
           name: user.name,
-          avatar: user.avatar,
+          cloudinary: user.cloudinary,
         }; // Create JWT Payload
 
         //Sign Token
@@ -117,6 +118,69 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     res.json(req.user);
+  }
+);
+
+router.patch(
+  "/uploadpicture",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const fileStr = req.body.data;
+
+      const uploadResponse = await cloudinary.uploader.upload(fileStr, {
+        upload_preset: "ml_default",
+      });
+
+      if (uploadResponse) {
+        User.findByIdAndUpdate(
+          req.user.id,
+          {
+            cloudinary: uploadResponse,
+          },
+          { new: true },
+          (err, doc) => {
+            if (err) {
+              console.log(err);
+            } else {
+              res.status(200).json(doc);
+            }
+          }
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ err: "Something went wrong" });
+    }
+  }
+);
+
+router.patch(
+  "/removepicture",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const user_id = req.user.id;
+    const public_id = req.body.public_id;
+
+    User.findByIdAndUpdate(
+      user_id,
+      {
+        cloudinary: null,
+      },
+      { new: true }
+    )
+      .then((user) => {
+        //delete cloudinary image
+        cloudinary.uploader.destroy(public_id, (error, result) => {
+          if (error) {
+            //add task to queue
+          }
+        });
+        return res.status(200).json(user);
+      })
+      .catch((err) => {
+        res.status(400).json({ message: "Something went wrong!!" });
+      });
   }
 );
 

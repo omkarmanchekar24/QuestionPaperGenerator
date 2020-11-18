@@ -1,7 +1,16 @@
 import axios from "axios";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
-import { AUTH_LOADING, GET_ERRORS, SET_CURRENT_USER } from "./types";
+import {
+  AUTH_LOADING,
+  GET_ERRORS,
+  SET_CURRENT_USER,
+  UPLOAD_PICTURE,
+  UPLOAD_PICTURE_FAILED,
+  REMOVE_PICTURE,
+  SHOW_MODAL,
+  HIDE_MODAL,
+} from "./types";
 
 //Register User
 export const registerUser = (userData, history) => (dispatch) => {
@@ -48,11 +57,45 @@ export const loginUser = (userData) => (dispatch) => {
     });
 };
 
-//Set logged in user
-export const setCurrentUser = (decoded) => {
-  return {
-    type: SET_CURRENT_USER,
-    payload: decoded,
+//upload profile picture
+export const changeProfilePicture = (data) => (dispatch) => {
+  dispatch(setAuthLoading(true));
+
+  axios
+    .patch("/api/users/uploadpicture", { data })
+    .then((res) => {
+      dispatch({
+        type: UPLOAD_PICTURE,
+        payload: res.data.cloudinary,
+      });
+    })
+    .catch((err) => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      });
+      dispatch({
+        type: UPLOAD_PICTURE_FAILED,
+      });
+    });
+};
+
+//Remove Profile Picture
+export const removeProfilePicture = (public_id) => {
+  return (dispatch) => {
+    axios
+      .patch("/api/users/removepicture", { public_id })
+      .then((res) => {
+        dispatch({
+          type: REMOVE_PICTURE,
+        });
+      })
+      .catch((err) => {
+        dispatch({
+          type: GET_ERRORS,
+          payload: err.response.data,
+        });
+      });
   };
 };
 
@@ -71,5 +114,25 @@ export const setAuthLoading = (loading) => {
   return {
     type: AUTH_LOADING,
     payload: loading,
+  };
+};
+
+//Set logged in user
+export const setCurrentUser = (decoded) => {
+  return {
+    type: SET_CURRENT_USER,
+    payload: decoded,
+  };
+};
+
+export const showModal = () => {
+  return {
+    type: SHOW_MODAL,
+  };
+};
+
+export const hideModal = () => {
+  return {
+    type: HIDE_MODAL,
   };
 };

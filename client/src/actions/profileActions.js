@@ -6,6 +6,7 @@ import {
   PROFILE_NOT_FOUND,
   SET_CURRENT_USER,
   GET_ERRORS,
+  UPLOAD_PICTURE,
 } from "../actions/types";
 
 //Get current profile

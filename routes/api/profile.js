@@ -2,6 +2,7 @@ const express = require("express");
 const passport = require("passport");
 const Profile = require("../../models/Profile");
 const router = express.Router();
+const { cloudinary } = require("../../utils/cloudinary");
 
 //Load Input Validation
 const validateProfitInput = require("../../validation/profile");
